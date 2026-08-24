@@ -1,8 +1,16 @@
 # samples/ —— 你亲手写的笔记
 
-这里放你**自己写的**小红书笔记，用来学你的语气。
+这里放**已发布**的小红书笔记。它有双重身份：
 
-⚠️ **这个目录已 gitignore，不会上传到 GitHub。**（只有本文件和 `example.md` 会）
+1. **语气语料** —— 只有亲写目录（guide/ life/ zhongcao/）参与语气统计
+2. **互动数据层** —— 全部目录（含 `_ai/`）的 frontmatter「互动:」行，
+   是 `profile/account.md` 台账的原始数，循环⑤回流就落在这里
+
+⚠️ **这个目录不上传 GitHub**（已 gitignore；2026-08-21 上午短暂进过 git，
+当天她拍板收回本地，分支历史已重写抹除）。仓库是公开的，笔记全文转录留在本地。
+
+照样只放**已经发布过**的笔记 —— 未发布草稿走 `drafts/`，别人写的东西不进来。
+⚠️ 本地文件不在 git 里 = 没有远端备份：改动后让 agent 重新打包一份给你保管。
 
 ---
 
@@ -25,6 +33,8 @@
 | 全部 AI 生成 | ❌ 别放 |
 
 AI 稿想留着参考就放 `samples/_ai/` —— 下划线开头，统计脚本不会去读那个目录。
+（隔离的只是**语气统计**；它们的互动数据照样进 account.md 台账 ——
+能源支票藏率 115% 正是台账里最重要的样本之一。）
 
 ### 如果某类内容你一向是 AI 起草
 
@@ -36,22 +46,27 @@ AI 稿想留着参考就放 `samples/_ai/` —— 下划线开头，统计脚本
 
 ## ★ 按内容类型分子目录
 
-这个账号有两种内容，写法不是同一套，所以**分开放、分开统计**：
+这个账号有三种内容（A 种草 / B 攻略 / C 生活），写法不是同一套，所以**分开放、分开统计**：
 
 ```
 samples/
-├── guide/     科普 / 信息型（法规解读、清单、干货）
-└── life/      生活 / 日常 / vlog / 旅行
+├── guide/     攻略 / 信息型（法规解读、清单、干货、测评）
+├── life/      生活 / 日常 / 异国恋 / 吐槽
+├── zhongcao/  种草 / 好物（带货稿文件名加 ad- 前缀）
+├── _ai/       AI 写的（不进语气统计；互动数据照进台账）
+├── _partial/  正文不全的（补全后移出）
+└── _video/    零文案视频（没有语气可学，数据照记）
 ```
 
 ```bash
 python skills/xhs-voice/scripts/voice_stats.py samples/guide
 python skills/xhs-voice/scripts/voice_stats.py samples/life
+python skills/xhs-voice/scripts/voice_stats.py samples/zhongcao
 ```
 
-**混在一起统计没意义** —— 两种模式的 emoji 密度会被平均成一个不存在的数字。
-科普稿 emoji 当项目符号（每百字 2.7 个），生活稿可能一个都不用，
-平均出来 1.3 个，两边都不对。
+**混在一起统计没意义** —— 不同模式的指标会被平均成一个不存在的数字。
+攻略稿 emoji 当评分刻度（💣🌟 可连排），种草稿只在行末放一个，
+平均出来的密度两边都不对；A1 种草稿零标点，混进去句长统计直接失真。
 
 只有一种内容就直接放 `samples/` 根目录。
 第三种类型（比如恰饭稿、测评）就再开一个子目录。
@@ -66,14 +81,18 @@ python skills/xhs-voice/scripts/voice_stats.py samples/life
 
 ```markdown
 ---
-title: 京都下雨那天我什么都没干
+title: 巴黎 | 每年的例行常规体检攻略
+tags: [体检, 法国生活, 医疗]
+线: 法国生活实操
+互动: 赞 158 · 收藏 191 · 评论 31 · 分享 57
+备注: 收藏 > 点赞，典型攻略型互动形状
 ---
-最近总在想，旅行是不是一定要把行程填满。
-
-第一次去京都我做了很详细的攻略，早上六点起，一天跑五个地方。这次我什么都没安排。
-
+只要你有那个 Ameli 卡都可以免费预约去做的
 ……
 ```
+
+「线」「互动」「备注」是数据字段：**「互动:」行是循环⑤的落点** ——
+发布 D+7 回填，之后每次复盘直接读它（详见 `profile/account.md` 回流节奏）。
 
 **懒得加 frontmatter 也行** —— 直接粘贴正文，第一行会被当成标题。
 
@@ -134,7 +153,9 @@ title: 京都下雨那天我什么都没干
 或者直接跑统计看看：
 
 ```bash
-python skills/xhs-voice/scripts/voice_stats.py samples
+python skills/xhs-voice/scripts/voice_stats.py samples/guide
+python skills/xhs-voice/scripts/voice_stats.py samples/life
+python skills/xhs-voice/scripts/voice_stats.py samples/zhongcao
 ```
 
 会输出句长分布、标点频率、emoji 偏好、口头禅、开头结尾套路。

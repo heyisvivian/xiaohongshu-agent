@@ -1,24 +1,27 @@
 # xhs-agent · 小红书创作技能包
 
-给 **Codex CLI** 用的小红书创作助手（同时兼容 Claude Code）。
-**先根据你的真实数据定方向和选题**，再写文案、出 3:4 封面、写视频脚本和字幕，
-**并且在发布前把违规词和限流风险扫一遍**。
+给 **Codex CLI** 用的小红书「一人编辑部」——
+**服务对象是 @viviiiwang 一个账号**（仓库公开供参考；换账号用见「快速开始」第二条路径）。
+**先根据你的真实数据定方向和选题**，再写文案、写视频脚本和字幕，
+**发布前把违规词和限流风险扫一遍**，发布后把互动数据收回来喂下一轮选题。
 
-赛道侧重：**法国生活实操 · 异国恋 · AI · 好物**
+赛道侧重：**法国生活实操 · 异国恋 · AI**（种草收缩到相机周边细分 —— 见 `profile/account.md` 效率表 v2）
 
 ---
 
-## 它做五件事
+## 它是一个循环，不是五件事
 
-| | 做什么 | 技能 |
-|---|---|---|
-| **定方向** ★ | 从你的互动数据判断哪条线加码、哪条减、下一步发什么 | `xhs-strategy` |
-| **写** | 从一个想法产出完整笔记 | `xhs-note` |
-| **改** | 把你写好的稿子改得更好读 | `xhs-polish` |
-| **拍** | 视频脚本、分镜、口播稿、`.srt` 字幕 | `xhs-script` `xhs-vlog` |
-| **过审** | 违禁词、限流风险、平台红线，发布前全扫一遍 | `xhs-guard` |
+| | 站 | 干什么 | 技能 / 文件 |
+|---|---|---|---|
+| ① | **数据基线** | 账号数据 + 语气护栏，一切判断的地基 | `profile/account.md` · `profile/voice.md` |
+| ② | **选题** ★ | 从数据判断哪条线加码、下一步发什么 | `xhs-strategy` |
+| ③ | **产出** | 图文：写 / 改；视频：脚本 / 分镜 / `.srt` 字幕 | `xhs-note` `xhs-polish` `xhs-script` `xhs-vlog` |
+| ④ | **强制关卡** | 违禁词、限流风险、AI 声明，发布前全扫 | `xhs-guard` |
+| ⑤ | **发布回流** | 按清单发布；D+7 把赞/藏/评/享写回 ① | `xhs-guard` 的发布清单 + `account.md` 台账 |
 
-配套一个：`xhs-voice`（语气护栏 —— 防 AI 通稿腔）。
+`xhs-voice` 生成 ① 的语气护栏（防 AI 通稿腔）。
+⑤ 是 2026-08-21 新加的一环 —— 没有它，每次用都像从头开始。
+整体规划见 `ROADMAP.md`。
 
 **不做封面，不出图。** 封面你自己做 —— 本仓库只负责提醒字数规范，以及**扫封面上的文字**（封面文字一样会被审核）。
 
@@ -38,8 +41,8 @@
 ### Codex CLI
 
 ```bash
-git clone https://github.com/heyisvivian/-agent.git xhs-agent
-cd xhs-agent
+git clone https://github.com/heyisvivian/xiaohongshu-agent.git
+cd xiaohongshu-agent
 ```
 
 Windows：
@@ -62,46 +65,53 @@ macOS / Linux：
 
 装完 install 脚本会自检 Python 和 Codex，并跑一次冒烟测试。
 
-### Claude Code
-
-这个仓库同时是一个标准 plugin（`.claude-plugin/plugin.json` + `skills/`）。
-在 Claude Code 里把仓库目录添加为本地 plugin 就能用。
-
 ### 依赖
 
 | 需要 | 用来 | 备注 |
 |---|---|---|
 | **Python 3.9+** | 合规扫描、语气统计、字幕生成 | 只用标准库，不装任何包 |
-| Codex CLI | 可选 | 不需要任何图像生成 API key |
+| **Codex CLI** | 跑技能的运行环境 | 必需；不需要任何图像生成 API key |
 
 ---
 
 ## 快速开始
 
-```bash
-# 1. 把你发过的笔记放进 samples/，按类型分子目录：
-#      samples/guide/   科普 / 信息型
-#      samples/life/    生活 / 日常 / vlog / 旅行
-#    每种 8 篇以上比较准。见 samples/README.md
+**Viviane 本人**：①数据基线已就位（22 篇语料 + `voice.md` + `account.md`，
+2026-08-21 建），跳过下面的搭建步骤，开 codex 直接说话（示例见下）。
+之后的维护就是循环⑤：发一篇回填一篇，每 10 篇重跑一次 `xhs-voice`。
 
-# 2. 开 codex，让它学你的语气
+**换一个账号用这套仓库**：`profile/` 和 `samples/` 里全是 @viviiiwang 的数据 ——
+直接用会写出别人的语气、按别人的数据选题。先清空这两处，然后按顺序：
+
+```bash
+# 1. 把你发过的笔记放进 samples/，按类型分子目录（见 samples/README.md）：
+#      samples/guide/ 攻略 · samples/life/ 生活 · samples/zhongcao/ 种草
+#      （AI 稿放 _ai/，正文不全放 _partial/，零文案视频放 _video/）
+#    每种 15 篇统计才稳、8 篇够用
+
+# 2. 先建数据基线（第一优先 —— 选题 > 笔锋）
+```
+> 帮我复盘数据，按 account.md 现有结构建我的数据基线
+
+需要每篇的赞/藏/评/享四项（笔记详情页或创作中心，别用主页截图）。
+
+```
+# 3. 再建语气护栏
 ```
 > 学一下我的语气
 
-会生成 `profile/voice.md`。**这一步做过一次就行**，之后所有写/改都基于它。
-
-⚠️ **档案是分模式的。** 同一个人写科普和写生活不是同一套写法 ——
-科普稿里 emoji 当项目符号是对的，生活稿里同样密度就成模板号了。
-所以要分开放样本、分开统计、分开建档，写之前先定模式。
+会生成 `profile/voice.md`。⚠️ **档案是分模式的** —— 同一个人写攻略和写生活
+不是同一套写法（攻略稿 emoji 当评分刻度是对的，种草稿连排同款就成模板号），
+分开放样本、分开统计、分开建档，写之前先定模式。
 
 ```
-# 3. 然后就可以直接说话了
+# 4. 然后就可以直接说话了
 ```
 > 帮我写篇笔记：京都下雨那天我什么也没干，在民宿窗边坐了一下午
 >
 > 这个文案帮我改改：<贴上你的稿子>
 >
-> 做个封面，标题用「京都下雨那天 我什么都没干」
+> 我这个月该发什么？先帮我复盘一下数据
 >
 > 审一下这个文案能不能发
 >
@@ -174,12 +184,13 @@ drafts/2026-08-13-kyoto-rainy-day/
 .
 ├── AGENTS.md                    # Agent 宪法：铁律、工作流、产出规范
 ├── README.md
+├── ROADMAP.md                   # 定位 · 诊断 · 下一步（2026-08-21 重新规划）
 ├── install.ps1 / install.sh
-├── .claude-plugin/plugin.json   # Claude Code plugin manifest
 ├── profile/
-│   ├── account.md               # ★ 数据基线与内容方向（xhs-strategy 的输入）
+│   ├── account.md               # ★ 数据基线：台账 / 效率表 v2（②的输入 + ⑤的回写处）
+│   ├── topics.md                # 选题库（本地，gitignore）
 │   └── voice.md                 # 语气护栏（跑 xhs-voice 生成）
-├── samples/                     # 你的历史笔记（已 gitignore）
+├── samples/                     # 你发过的笔记全文（本地，gitignore）
 ├── drafts/                      # 产出（已 gitignore）
 └── skills/
     ├── xhs-strategy/            # ★ 定方向 · 数据复盘 · 选题
@@ -200,7 +211,7 @@ drafts/2026-08-13-kyoto-rainy-day/
 
 ---
 
-## 三个脚本，单独也能用
+## 四个脚本，单独也能用
 
 ```bash
 # 合规扫描
@@ -209,10 +220,15 @@ python skills/xhs-guard/scripts/xhs_scan.py --text "全网最好吃的一家，�
 python skills/xhs-guard/scripts/xhs_scan.py note.md --strict --json
 
 # 语气统计
-python skills/xhs-voice/scripts/voice_stats.py samples
+python skills/xhs-voice/scripts/voice_stats.py samples/guide   # 按模式目录跑，指向 samples 根会提示你分开跑
 
 # 字幕生成
 python skills/xhs-vlog/scripts/make_srt.py narration.txt -o subtitle.srt --cps 5.0
+```
+
+```bash
+# 合规扫描器的回归断言（改完 lexicon.json 一定要跑）
+python skills/xhs-guard/scripts/test_xhs_scan.py
 ```
 
 全部只用 Python 标准库。不联网，不上传任何内容。
@@ -229,8 +245,20 @@ python skills/xhs-vlog/scripts/make_srt.py narration.txt -o subtitle.srt --cps 5
 - **误报** → 加到对应规则的 `exclude` 数组
 - **`updated` 距今超过半年** → 该去复核平台最新规则了
 
+⚠️ **改完词库跑一遍断言**：
+
+```bash
+python skills/xhs-guard/scripts/test_xhs_scan.py
+```
+
+79 条断言，分「必须放行」和「必须拦下」两组。豁免加宽了会从后一组漏出去，
+规则收紧了会让前一组的误报回归 —— 两种都不该带上线。只用标准库，几秒钟跑完。
+
+`profile/account.md` 是活文件：每发一篇 D+7 回填互动数据，每月或每 10 篇
+重算效率表（节奏见文件内「回流节奏」节）。它停更，选题就回到拍脑袋。
+
 `profile/voice.md` 也要维护：**每积累 10 篇新笔记就重跑一次 `xhs-voice`**，
-看看统计有没有漂移。她说「这个不像我」的时候，把结论写回档案 ——
+看看统计有没有漂移。你说「这个不像我」的时候，把结论写回档案 ——
 一次这样的反馈价值大于十篇样本。
 
 ---
@@ -242,7 +270,7 @@ python skills/xhs-vlog/scripts/make_srt.py narration.txt -o subtitle.srt --cps 5
 （AI 视觉创作、AI 角色创作、AI 知识科普都是鼓励方向），
 但打击 AI 造假、AI 托管养号、以及**不标注的纯 AI 内容**。
 
-封面不涉及这一条（本地 CSS 排版不是生成）。但**正文主要由 AI 起草**时 —— 发布时记得
+封面由你自己做，涉不涉及这一条你自己判断。但**正文主要由 AI 起草**时 —— 发布时记得
 
 > 【设置】→【内容类型声明】→ 勾选【笔记含 AI 合成内容】
 

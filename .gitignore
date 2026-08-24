@@ -1,12 +1,12 @@
-# 你的历史笔记语料 —— 本地学习用，不上传
+# 选题与已发布笔记原文 —— 本地资产，不上传（2026-08-21 她拍板收回本地）。
+# 仓库是公开的：samples/ 是她已发布笔记的全文转录，voice.md 有原文引用，
+# topics.md 是未发布的选题管线。三者只存在于本地和她自己的备份里 ——
+# 容器/机器是临时的，改动后记得让 agent 重新打包发给她。
 samples/*
 !samples/README.md
 !samples/_format-example.md
-
-# 你的语气档案 —— 默认不上传。
-# 这个仓库是公开的，而 voice.md 里会有你笔记的原文引用和写作习惯分析。
-# 想在多台机器间同步就把下面这行删掉（见 profile/README.md）。
 profile/voice.md
+profile/topics.md
 
 # 产出的草稿（图片体积大 + 未发布内容，默认不进 git）
 drafts/*
